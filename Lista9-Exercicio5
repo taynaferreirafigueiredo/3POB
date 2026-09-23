@@ -1,0 +1,76 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public interface Tributavel {
+    double calcularTributo();
+}
+
+abstract class Item {
+    
+    protected int codigo;
+    protected double precoBase;
+    
+    public Item(int codigo, double precoBase) {
+        this.codigo = codigo;
+        this.precoBase = precoBase;
+    }
+    
+    public int getCodigo() {
+        return codigo;
+    }
+    
+    public double getPrecoBase() {
+        return precoBase;
+    }
+}
+
+class Eletronico extends Item implements Tributavel {
+    
+    private static final double TAXA_TRIBUTO = 0.15;
+    
+    public Eletronico(int codigo, double precoBase) {
+        super(codigo, precoBase);
+    }
+    
+    @Override
+    public double calcularTributo() {
+        return precoBase * TAXA_TRIBUTO;
+    }
+}
+
+class Alimento extends Item {
+    
+    public Alimento(int codigo, double precoBase) {
+        super(codigo, precoBase);
+    }
+}
+
+public class Main {
+    
+    public static double calcularTotalImpostos(List<Tributavel> itensTributaveis) {
+        double total = 0;
+        for (Tributavel item : itensTributaveis) {
+            total += item.calcularTributo();
+        }
+        return total;
+    }
+    
+    public static void main(String[] args) {
+        Eletronico tv = new Eletronico(1, 2000.0);
+        Eletronico celular = new Eletronico(2, 3000.0);
+        Alimento arroz = new Alimento(3, 20.0);
+        
+        System.out.println("TV - Codigo: " + tv.getCodigo() + ", Preco: " + tv.getPrecoBase() + ", Tributo: " + tv.calcularTributo());
+        System.out.println("Celular - Codigo: " + celular.getCodigo() + ", Preco: " + celular.getPrecoBase() + ", Tributo: " + celular.calcularTributo());
+        System.out.println("Arroz - Codigo: " + arroz.getCodigo() + ", Preco: " + arroz.getPrecoBase() + " (nao tributavel)");
+        
+        System.out.println("------------------------------");
+        
+        List<Tributavel> itensTributaveis = new ArrayList<>();
+        itensTributaveis.add(tv);
+        itensTributaveis.add(celular);
+        
+        double totalImpostos = calcularTotalImpostos(itensTributaveis);
+        System.out.println("Total de impostos sobre itens tributaveis: " + totalImpostos);
+    }
+}
