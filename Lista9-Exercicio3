@@ -1,0 +1,73 @@
+public interface Autenticavel {
+    boolean autenticar(String senha);
+}
+
+interface ExportavelJSON {
+    String exportarJSON();
+}
+
+class Usuario implements Autenticavel {
+    
+    protected String login;
+    protected String senha;
+    
+    public Usuario(String login, String senha) {
+        this.login = login;
+        this.senha = senha;
+    }
+    
+    public String getLogin() {
+        return login;
+    }
+    
+    @Override
+    public boolean autenticar(String senha) {
+        return this.senha.equals(senha);
+    }
+}
+
+class Administrador implements Autenticavel, ExportavelJSON {
+    
+    private String login;
+    private String senha;
+    private int nivelAcesso;
+    
+    public Administrador(String login, String senha, int nivelAcesso) {
+        this.login = login;
+        this.senha = senha;
+        this.nivelAcesso = nivelAcesso;
+    }
+    
+    public String getLogin() {
+        return login;
+    }
+    
+    public int getNivelAcesso() {
+        return nivelAcesso;
+    }
+    
+    @Override
+    public boolean autenticar(String senha) {
+        return this.senha.equals(senha);
+    }
+    
+    @Override
+    public String exportarJSON() {
+        return "{ \"login\": \"" + login + "\", \"nivelAcesso\": " + nivelAcesso + " }";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Usuario usuario = new Usuario("joao123", "senha123");
+        Administrador admin = new Administrador("admin01", "adminSenha", 5);
+        
+        System.out.println("Autenticacao usuario (senha correta): " + usuario.autenticar("senha123"));
+        System.out.println("Autenticacao usuario (senha errada): " + usuario.autenticar("errada"));
+        
+        System.out.println("------------------------------");
+        
+        System.out.println("Autenticacao admin (senha correta): " + admin.autenticar("adminSenha"));
+        System.out.println("Exportacao JSON do admin: " + admin.exportarJSON());
+    }
+}
