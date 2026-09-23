@@ -1,0 +1,89 @@
+public class Conta {
+    
+    protected String numero;
+    protected double saldo;
+    
+    public Conta(String numero, double saldo) {
+        this.numero = numero;
+        this.saldo = saldo;
+    }
+    
+    public String getNumero() {
+        return numero;
+    }
+    
+    public double getSaldo() {
+        return saldo;
+    }
+    
+    public void depositar(double valor) {
+        saldo += valor;
+    }
+    
+    public void sacar(double valor) {
+        if (valor > saldo) {
+            System.out.println("Saldo insuficiente para saque.");
+        } else {
+            saldo -= valor;
+        }
+    }
+}
+
+class ContaPoupanca extends Conta {
+    
+    private double taxaRendimento;
+    
+    public ContaPoupanca(String numero, double saldo, double taxaRendimento) {
+        super(numero, saldo);
+        this.taxaRendimento = taxaRendimento;
+    }
+    
+    public void aplicarRendimento() {
+        double rendimento = saldo * (taxaRendimento / 100);
+        saldo += rendimento;
+    }
+}
+
+class ContaCorrente extends Conta {
+    
+    private double limiteChequeEspecial;
+    private static final double TAXA_SAQUE = 2.00;
+    
+    public ContaCorrente(String numero, double saldo, double limiteChequeEspecial) {
+        super(numero, saldo);
+        this.limiteChequeEspecial = limiteChequeEspecial;
+    }
+    
+    @Override
+    public void sacar(double valor) {
+        double valorTotal = valor + TAXA_SAQUE;
+        
+        if (valorTotal > saldo + limiteChequeEspecial) {
+            System.out.println("Saque nao permitido: limite do cheque especial excedido.");
+        } else {
+            saldo -= valorTotal;
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ContaPoupanca poupanca = new ContaPoupanca("P001", 1000.0, 5.0);
+        
+        System.out.println("Saldo inicial poupanca: " + poupanca.getSaldo());
+        poupanca.aplicarRendimento();
+        System.out.println("Saldo apos rendimento: " + poupanca.getSaldo());
+        poupanca.sacar(200.0);
+        System.out.println("Saldo apos saque de 200: " + poupanca.getSaldo());
+        
+        System.out.println("------------------------------");
+        
+        ContaCorrente corrente = new ContaCorrente("C001", 500.0, 300.0);
+        
+        System.out.println("Saldo inicial corrente: " + corrente.getSaldo());
+        corrente.sacar(600.0);
+        System.out.println("Saldo apos saque de 600 (com taxa): " + corrente.getSaldo());
+        corrente.sacar(300.0);
+        System.out.println("Tentativa de saque de 300 (deve exceder limite): " + corrente.getSaldo());
+    }
+}
