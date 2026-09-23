@@ -1,0 +1,28 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        String[] valores = {"10", "25", "abc", "50"};
+        
+        Scanner scanner = new Scanner(System.in);
+        
+        try {
+            System.out.print("Digite o indice a ser acessado (0 a 3): ");
+            int indice = scanner.nextInt();
+            
+            int numero = Integer.parseInt(valores[indice]);
+            
+            System.out.println("Valor convertido com sucesso: " + numero);
+            
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Erro: indice inexistente no vetor.");
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: o valor na posicao informada nao e um numero valido.");
+            
+        } finally {
+            System.out.println("Operacao finalizada.");
+            scanner.close();
+        }
+    }
+}
