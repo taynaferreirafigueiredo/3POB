@@ -1,0 +1,56 @@
+public class SaldoInsuficienteException extends Exception {
+    
+    public SaldoInsuficienteException(String mensagem) {
+        super(mensagem);
+    }
+}
+
+class ContaCorrente {
+    
+    private String numero;
+    private double saldo;
+    
+    public ContaCorrente(String numero, double saldo) {
+        this.numero = numero;
+        this.saldo = saldo;
+    }
+    
+    public double getSaldo() {
+        return saldo;
+    }
+    
+    public void sacar(double valor) throws SaldoInsuficienteException {
+        if (valor > saldo) {
+            throw new SaldoInsuficienteException("Saldo insuficiente para realizar o saque de " + valor + ". Saldo atual: " + saldo);
+        }
+        saldo -= valor;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ContaCorrente conta = new ContaCorrente("CC001", 500.0);
+        
+        System.out.println("Saldo inicial: " + conta.getSaldo());
+        
+        try {
+            System.out.println("Tentando sacar 200.0...");
+            conta.sacar(200.0);
+            System.out.println("Saque realizado com sucesso. Saldo atual: " + conta.getSaldo());
+            
+        } catch (SaldoInsuficienteException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+        
+        System.out.println("------------------------------");
+        
+        try {
+            System.out.println("Tentando sacar 1000.0...");
+            conta.sacar(1000.0);
+            System.out.println("Saque realizado com sucesso. Saldo atual: " + conta.getSaldo());
+            
+        } catch (SaldoInsuficienteException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+}
