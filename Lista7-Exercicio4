@@ -1,0 +1,69 @@
+public class Carro {
+    
+    private String modelo;
+    private int ano;
+    private int velocidadeAtual;
+    
+    public Carro(String modelo, int ano) {
+        this.modelo = modelo;
+        this.ano = ano;
+        this.velocidadeAtual = 0;
+    }
+    
+    public String getModelo() {
+        return modelo;
+    }
+    
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+    
+    public int getAno() {
+        return ano;
+    }
+    
+    public int getVelocidadeAtual() {
+        return velocidadeAtual;
+    }
+    
+    public void acelerar(int incremento) {
+        velocidadeAtual += incremento;
+    }
+    
+    public void frear(int decremento) {
+        velocidadeAtual -= decremento;
+        if (velocidadeAtual < 0) {
+            velocidadeAtual = 0;
+        }
+    }
+    
+    public boolean isEmMovimento() {
+        return velocidadeAtual > 0;
+    }
+    
+    public static void main(String[] args) {
+        Carro carro1 = new Carro("Fusca", 1975);
+        
+        System.out.println("Modelo: " + carro1.getModelo());
+        System.out.println("Ano: " + carro1.getAno());
+        System.out.println("Velocidade atual: " + carro1.getVelocidadeAtual());
+        System.out.println("Em movimento? " + carro1.isEmMovimento());
+        
+        System.out.println("------------------------------");
+        
+        carro1.acelerar(40);
+        System.out.println("Apos acelerar 40 -> Velocidade: " + carro1.getVelocidadeAtual());
+        System.out.println("Em movimento? " + carro1.isEmMovimento());
+        
+        System.out.println("------------------------------");
+        
+        carro1.frear(60);
+        System.out.println("Apos frear 60 -> Velocidade: " + carro1.getVelocidadeAtual());
+        System.out.println("Em movimento? " + carro1.isEmMovimento());
+        
+        System.out.println("------------------------------");
+        
+        carro1.setModelo("Fusca Turbo");
+        System.out.println("Novo modelo: " + carro1.getModelo());
+    }
+}
