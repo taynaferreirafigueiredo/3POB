@@ -1,0 +1,46 @@
+import java.io.IOException;
+
+public class ProcessamentoDadosException extends Exception {
+    
+    public ProcessamentoDadosException(String mensagem, Throwable causa) {
+        super(mensagem, causa);
+    }
+}
+
+class ServicoArquivo {
+    
+    public void processarArquivo(String caminho) throws ProcessamentoDadosException {
+        try {
+            if (caminho == null || caminho.isEmpty()) {
+                throw new IOException("Nao foi possivel ler o arquivo: caminho nulo ou vazio.");
+            }
+            
+            System.out.println("Processando arquivo: " + caminho);
+            
+        } catch (IOException e) {
+            throw new ProcessamentoDadosException("Falha ao processar o arquivo de dados.", e);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ServicoArquivo servico = new ServicoArquivo();
+        
+        try {
+            servico.processarArquivo("dados.txt");
+        } catch (ProcessamentoDadosException e) {
+            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Causa raiz: " + e.getCause().getMessage());
+        }
+        
+        System.out.println("------------------------------");
+        
+        try {
+            servico.processarArquivo("");
+        } catch (ProcessamentoDadosException e) {
+            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Causa raiz: " + e.getCause().getMessage());
+        }
+    }
+}
