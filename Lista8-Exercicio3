@@ -1,0 +1,65 @@
+public class Notificacao {
+    
+    protected String destinatario;
+    
+    public Notificacao(String destinatario) {
+        this.destinatario = destinatario;
+    }
+    
+    public void enviar(String mensagem) {
+        System.out.println("Enviando notificacao generica para " + destinatario + ": " + mensagem);
+    }
+}
+
+class EmailNotificacao extends Notificacao {
+    
+    public EmailNotificacao(String destinatario) {
+        super(destinatario);
+    }
+    
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("Enviando E-mail para " + destinatario + ": " + mensagem);
+    }
+}
+
+class SmsNotificacao extends Notificacao {
+    
+    public SmsNotificacao(String destinatario) {
+        super(destinatario);
+    }
+    
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("Enviando SMS para o numero " + destinatario + ": " + mensagem);
+    }
+}
+
+class PushNotificacao extends Notificacao {
+    
+    public PushNotificacao(String destinatario) {
+        super(destinatario);
+    }
+    
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("Enviando Push Notification para o dispositivo " + destinatario + ": " + mensagem);
+    }
+}
+
+public class Main {
+    
+    public static void processarEnvio(Notificacao notificacao, String texto) {
+        notificacao.enviar(texto);
+    }
+    
+    public static void main(String[] args) {
+        Notificacao email = new EmailNotificacao("joao@email.com");
+        Notificacao sms = new SmsNotificacao("11999999999");
+        Notificacao push = new PushNotificacao("dispositivo-123");
+        
+        processarEnvio(email, "Sua fatura esta disponivel.");
+        processarEnvio(sms, "Seu codigo de verificacao e 4321.");
+        processarEnvio(push, "Voce tem uma nova mensagem.");
+    }
+}
