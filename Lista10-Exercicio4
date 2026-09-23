@@ -1,0 +1,44 @@
+public class IdadeInvalidaException extends RuntimeException {
+    
+    public IdadeInvalidaException(String mensagem) {
+        super(mensagem);
+    }
+}
+
+class Eleitor {
+    
+    public void cadastrar(String nome, int idade) {
+        if (idade < 0 || idade > 130) {
+            throw new IdadeInvalidaException("Idade invalida para " + nome + ": " + idade + ". A idade deve estar entre 0 e 130.");
+        }
+        System.out.println("Eleitor " + nome + " cadastrado com sucesso. Idade: " + idade);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Eleitor eleitor = new Eleitor();
+        
+        try {
+            eleitor.cadastrar("Maria", 25);
+        } catch (IdadeInvalidaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+        
+        System.out.println("------------------------------");
+        
+        try {
+            eleitor.cadastrar("Joao", 150);
+        } catch (IdadeInvalidaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+        
+        System.out.println("------------------------------");
+        
+        try {
+            eleitor.cadastrar("Ana", -5);
+        } catch (IdadeInvalidaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+}
