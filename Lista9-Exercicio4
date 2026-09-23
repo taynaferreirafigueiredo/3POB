@@ -1,0 +1,95 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class ContaBancaria {
+    
+    private String numero;
+    private double saldo;
+    
+    public ContaBancaria(String numero, double saldo) {
+        this.numero = numero;
+        this.saldo = saldo;
+    }
+    
+    public String getNumero() {
+        return numero;
+    }
+    
+    public double getSaldo() {
+        return saldo;
+    }
+    
+    protected void setSaldo(double saldo) {
+        this.saldo = saldo;
+    }
+    
+    public void depositar(double valor) {
+        saldo += valor;
+    }
+    
+    public void consultarSaldo() {
+        System.out.println("Conta " + numero + " - Saldo atual: " + saldo);
+    }
+    
+    public abstract void cobrarTaxaMensal();
+}
+
+class ContaCorrente extends ContaBancaria {
+    
+    private static final double TAXA_FIXA = 15.00;
+    
+    public ContaCorrente(String numero, double saldo) {
+        super(numero, saldo);
+    }
+    
+    @Override
+    public void cobrarTaxaMensal() {
+        setSaldo(getSaldo() - TAXA_FIXA);
+        System.out.println("Taxa mensal fixa de " + TAXA_FIXA + " cobrada da conta " + getNumero());
+    }
+}
+
+class ContaEmpresarial extends ContaBancaria {
+    
+    private static final double TAXA_FIXA = 30.00;
+    private static final double PERCENTUAL_SOBRE_SALDO = 0.5;
+    
+    public ContaEmpresarial(String numero, double saldo) {
+        super(numero, saldo);
+    }
+    
+    @Override
+    public void cobrarTaxaMensal() {
+        double taxaVariavel = getSaldo() * (PERCENTUAL_SOBRE_SALDO / 100);
+        double taxaTotal = TAXA_FIXA + taxaVariavel;
+        setSaldo(getSaldo() - taxaTotal);
+        System.out.println("Taxa mensal de " + taxaTotal + " cobrada da conta " + getNumero());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        List<ContaBancaria> contas = new ArrayList<>();
+        
+        contas.add(new ContaCorrente("CC001", 1000.0));
+        contas.add(new ContaEmpresarial("CE001", 5000.0));
+        
+        System.out.println("Saldos antes da virada do mes:");
+        for (ContaBancaria conta : contas) {
+            conta.consultarSaldo();
+        }
+        
+        System.out.println("------------------------------");
+        System.out.println("Executando cobranca de taxa mensal...");
+        
+        for (ContaBancaria conta : contas) {
+            conta.cobrarTaxaMensal();
+        }
+        
+        System.out.println("------------------------------");
+        System.out.println("Saldos apos a virada do mes:");
+        for (ContaBancaria conta : contas) {
+            conta.consultarSaldo();
+        }
+    }
+}
