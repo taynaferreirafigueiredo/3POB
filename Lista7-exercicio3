@@ -1,0 +1,58 @@
+public class Retangulo {
+    
+    private double largura;
+    private double altura;
+    
+    public Retangulo(double largura, double altura) {
+        setLargura(largura);
+        setAltura(altura);
+    }
+    
+    public void setLargura(double largura) {
+        if (largura <= 0) {
+            System.out.println("Aviso: largura invalida (" + largura + "). Definindo valor padrao 1.0");
+            this.largura = 1.0;
+        } else {
+            this.largura = largura;
+        }
+    }
+    
+    public void setAltura(double altura) {
+        if (altura <= 0) {
+            System.out.println("Aviso: altura invalida (" + altura + "). Definindo valor padrao 1.0");
+            this.altura = 1.0;
+        } else {
+            this.altura = altura;
+        }
+    }
+    
+    public double getLargura() {
+        return largura;
+    }
+    
+    public double getAltura() {
+        return altura;
+    }
+    
+    public double calcularArea() {
+        return largura * altura;
+    }
+    
+    public double calcularPerimetro() {
+        return 2 * (largura + altura);
+    }
+    
+    public static void main(String[] args) {
+        Retangulo r1 = new Retangulo(5.0, 3.0);
+        System.out.println("Retangulo 1 -> largura: " + r1.getLargura() + " altura: " + r1.getAltura());
+        System.out.println("Area: " + r1.calcularArea());
+        System.out.println("Perimetro: " + r1.calcularPerimetro());
+        
+        System.out.println("------------------------------");
+        
+        Retangulo r2 = new Retangulo(-4.0, 0.0);
+        System.out.println("Retangulo 2 -> largura: " + r2.getLargura() + " altura: " + r2.getAltura());
+        System.out.println("Area: " + r2.calcularArea());
+        System.out.println("Perimetro: " + r2.calcularPerimetro());
+    }
+}
