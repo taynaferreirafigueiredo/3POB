@@ -1,0 +1,37 @@
+import java.util.Scanner;
+
+public class ConversaoVetor {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Vetor de Strings com 4 posicoes (indices de 0 a 3)
+        String[] valores = {"10", "25", "abc", "50"};
+
+        System.out.println("Vetor com 4 posicoes (indices de 0 a 3).");
+        System.out.print("Digite o indice que voce quer acessar: ");
+        int indice = scanner.nextInt();
+
+        try {
+            // Pega a String que esta na posicao escolhida
+            // (se o indice nao existir, lanca ArrayIndexOutOfBoundsException)
+            String texto = valores[indice];
+
+            // Converte a String para int
+            // (se nao for numero, lanca NumberFormatException)
+            int numero = Integer.parseInt(texto);
+
+            System.out.println("Valor convertido com sucesso: " + numero);
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // Cai aqui se o indice for negativo ou maior que 3
+            System.out.println("Erro: o indice " + indice + " nao existe no vetor!");
+
+        } catch (NumberFormatException e) {
+            // Cai aqui se a String nao for um numero valido, como "abc"
+            System.out.println("Erro: o valor \"" + valores[indice] + "\" nao e um numero valido!");
+        }
+
+        scanner.close();
+    }
+}
