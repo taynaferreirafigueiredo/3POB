@@ -1,0 +1,22 @@
+import java.util.Arrays;
+import java.util.List;
+
+public class Exercicio1 {
+    public static void main(String[] args) {
+
+        // Lista original de nomes
+        List<String> nomes = Arrays.asList("ana", "carlos", "beatriz", "antonio", "amanda", "bernardo");
+
+        List<String> resultado = nomes.stream()
+                // 1. filtra só os nomes que começam com "a" (ignorando maiúsculas/minúsculas)
+                .filter(nome -> nome.toLowerCase().startsWith("a"))
+                // 2. transforma cada nome em maiúsculo
+                .map(nome -> nome.toUpperCase())
+                // 3. ordena em ordem alfabética
+                .sorted()
+                // 4. junta tudo numa nova lista
+                .toList();
+
+        System.out.println(resultado);
+    }
+}
