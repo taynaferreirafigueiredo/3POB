@@ -1,0 +1,61 @@
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+class Produto {
+    private String nome;
+    private double preco;
+
+    public Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " - R$ " + preco;
+    }
+}
+
+public class Exercicio2 {
+    public static void main(String[] args) {
+
+        List<Produto> produtos = Arrays.asList(
+                new Produto("Notebook", 3500.00),
+                new Produto("Mouse", 80.00),
+                new Produto("Teclado", 150.00),
+                new Produto("Monitor", 900.00),
+                new Produto("Headset", 250.00),
+                new Produto("Webcam", 200.00)
+        );
+
+        double total = produtos.stream()
+                .mapToDouble(p -> p.getPreco())
+                .sum();
+        System.out.println("Valor total: R$ " + total);
+
+        double media = produtos.stream()
+                .mapToDouble(p -> p.getPreco())
+                .average()
+                .orElse(0);
+        System.out.printf("Preço médio: R$ %.2f%n", media);
+
+        Optional<Produto> maisCaro = produtos.stream()
+                .max(Comparator.comparingDouble(p -> p.getPreco()));
+
+        if (maisCaro.isPresent()) {
+            System.out.println("Produto mais caro: " + maisCaro.get());
+        } else {
+            System.out.println("A lista está vazia.");
+        }
+    }
+}
