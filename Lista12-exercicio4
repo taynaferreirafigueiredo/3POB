@@ -1,0 +1,40 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+// Interface funcional com um único método abstrato
+@FunctionalInterface
+interface TransformadorTexto {
+    String transformar(String entrada);
+}
+
+public class Exercicio4 {
+
+    // Método utilitário: aplica a regra em cada texto da lista
+    public static List<String> processarLista(List<String> lista, TransformadorTexto regra) {
+        List<String> resultado = new ArrayList<>();
+        for (String texto : lista) {
+            resultado.add(regra.transformar(texto));
+        }
+        return resultado;
+    }
+
+    public static void main(String[] args) {
+
+        List<String> palavras = Arrays.asList("java", "lambda", "stream");
+
+        // Lambda 1: inverter a string
+        List<String> invertidas = processarLista(palavras,
+                texto -> new StringBuilder(texto).reverse().toString());
+        System.out.println("Invertidas: " + invertidas);
+
+        // Lambda 2: colocar entre colchetes
+        List<String> entreColchetes = processarLista(palavras,
+                texto -> "[" + texto + "]");
+        System.out.println("Entre colchetes: " + entreColchetes);
+
+        // Method Reference: caixa alta
+        List<String> maiusculas = processarLista(palavras, String::toUpperCase);
+        System.out.println("Maiúsculas: " + maiusculas);
+    }
+}
