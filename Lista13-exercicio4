@@ -1,0 +1,30 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Exercicio4 {
+    public static void main(String[] args) {
+        Path pasta = Path.of("src");
+        long somaTotal = 0;
+
+        try (Stream<Path> arvore = Files.walk(pasta)) {
+            List<Path> arquivosJava = arvore
+                    .filter(p -> Files.isRegularFile(p))
+                    .filter(p -> p.toString().endsWith(".java"))
+                    .toList();
+
+            for (Path arquivo : arquivosJava) {
+                long tamanho = Files.size(arquivo);
+                somaTotal += tamanho;
+                System.out.println(pasta.relativize(arquivo) + " - " + tamanho + " bytes");
+            }
+
+            System.out.println("Arquivos .java encontrados: " + arquivosJava.size());
+            System.out.println("Tamanho total: " + somaTotal + " bytes");
+        } catch (IOException e) {
+            System.out.println("Erro ao percorrer o diretorio: " + e.getMessage());
+        }
+    }
+}
