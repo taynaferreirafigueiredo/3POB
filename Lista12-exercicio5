@@ -1,0 +1,58 @@
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+// Classe Funcionario no mesmo arquivo (sem "public")
+class Funcionario {
+    private String nome;
+    private String departamento;
+    private double salario;
+
+    public Funcionario(String nome, String departamento, double salario) {
+        this.nome = nome;
+        this.departamento = departamento;
+        this.salario = salario;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public double getSalario() {
+        return salario;
+    }
+}
+
+public class Exercicio5 {
+    public static void main(String[] args) {
+
+        List<Funcionario> funcionarios = Arrays.asList(
+                new Funcionario("Ana", "TI", 5000.00),
+                new Funcionario("Bruno", "RH", 3500.00),
+                new Funcionario("Carlos", "TI", 7200.00),
+                new Funcionario("Daniela", "Financeiro", 4800.00),
+                new Funcionario("Eduardo", "TI", 6100.00)
+        );
+
+        // 1. Predicate: só funcionários do departamento "TI"
+        Predicate<Funcionario> ehDeTI = f -> f.getDepartamento().equals("TI");
+
+        // 2. Function: pega o salário e aplica reajuste de 10%
+        Function<Funcionario, Double> salarioReajustado = f -> f.getSalario() * 1.10;
+
+        // 3. Consumer: imprime o valor formatado
+        Consumer<Double> imprimir = valor -> System.out.printf("Salário projetado: R$ %.2f%n", valor);
+
+        // Pipeline único usando as três interfaces
+        funcionarios.stream()
+                .filter(ehDeTI)             // Predicate
+                .map(salarioReajustado)     // Function
+                .forEach(imprimir);         // Consumer
+    }
+}
