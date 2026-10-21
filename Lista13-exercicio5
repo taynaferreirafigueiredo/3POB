@@ -1,0 +1,33 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Exercicio5 {
+
+    public static String padronizar(String nome) {
+        return nome.substring(0, 1).toUpperCase() + nome.substring(1).toLowerCase();
+    }
+
+    public static void main(String[] args) {
+        Path entrada = Path.of("clientes_bruto.txt");
+        Path saida = Path.of("clientes_padronizado.txt");
+
+        try (Stream<String> linhas = Files.lines(entrada)) {
+            List<String> tratados = linhas
+                    .map(linha -> linha.trim())
+                    .filter(linha -> !linha.isBlank())
+                    .map(linha -> padronizar(linha))
+                    .toList();
+
+            Files.write(saida, tratados, StandardOpenOption.CREATE);
+
+            System.out.println("Arquivo gerado: " + saida);
+            tratados.forEach(System.out::println);
+        } catch (IOException e) {
+            System.out.println("Erro de I/O: " + e.getMessage());
+        }
+    }
+}
