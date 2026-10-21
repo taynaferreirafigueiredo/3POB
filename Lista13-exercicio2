@@ -1,0 +1,23 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class Exercicio2 {
+    public static void main(String[] args) {
+        Path caminho = Path.of("servidor.log");
+
+        try (Stream<String> linhas = Files.lines(caminho)) {
+            List<String> erros = linhas
+                    .filter(linha -> linha.startsWith("[ERROR]"))
+                    .map(linha -> linha.replace("[ERROR] ", ""))
+                    .toList();
+
+            System.out.println("Total de erros: " + erros.size());
+            erros.forEach(mensagem -> System.out.println("- " + mensagem));
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+        }
+    }
+}
