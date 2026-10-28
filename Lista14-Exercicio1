@@ -1,0 +1,49 @@
+class ContadorCrescente implements Runnable {
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            System.out.println("Crescente: " + i);
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                System.out.println("Contador crescente foi interrompido.");
+            }
+        }
+    }
+}
+
+class ContadorRegressivo implements Runnable {
+
+    @Override
+    public void run() {
+        for (int i = 10; i >= 1; i--) {
+            System.out.println("Regressivo: " + i);
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                System.out.println("Contador regressivo foi interrompido.");
+            }
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new ContadorCrescente());
+        Thread t2 = new Thread(new ContadorRegressivo());
+
+        t1.start();
+        t2.start();
+
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            System.out.println("A thread main foi interrompida.");
+        }
+
+        System.out.println("Contagens finalizadas!");
+    }
+}
