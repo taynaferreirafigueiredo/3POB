@@ -1,0 +1,55 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+class TarefaDownload implements Callable<String> {
+    private int id;
+
+    public TarefaDownload(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String call() throws Exception {
+        Random random = new Random();
+        int tempo = 500 + random.nextInt(1001);
+
+        Thread.sleep(tempo);
+
+        return "Arquivo " + id + " processado pela thread: " + Thread.currentThread().getName();
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        ExecutorService pool = Executors.newFixedThreadPool(3);
+
+        List<Future<String>> resultados = new ArrayList<>();
+
+        for (int i = 1; i <= 6; i++) {
+            Future<String> futuro = pool.submit(new TarefaDownload(i));
+            resultados.add(futuro);
+        }
+
+        for (Future<String> futuro : resultados) {
+            try {
+                String mensagem = futuro.get();
+                System.out.println(mensagem);
+            } catch (InterruptedException e) {
+                System.out.println("A espera foi interrompida.");
+            } catch (ExecutionException e) {
+                System.out.println("Erro ao executar a tarefa: " + e.getMessage());
+            }
+        }
+
+        pool.shutdown();
+
+        System.out.println("Todos os downloads foram processados.");
+    }
+}
