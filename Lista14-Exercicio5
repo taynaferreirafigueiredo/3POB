@@ -1,0 +1,47 @@
+import java.util.concurrent.CompletableFuture;
+
+public class Main {
+
+    public static void main(String[] args) {
+        System.out.println("Iniciando cotacoes...");
+
+        long inicio = System.currentTimeMillis();
+
+        CompletableFuture<Double> servicoA = CompletableFuture.supplyAsync(() -> {
+            System.out.println("Cotando passagens aereas...");
+            try {
+                Thread.sleep(1200);
+            } catch (InterruptedException e) {
+                System.out.println("Cotacao de passagens interrompida.");
+            }
+            return 1500.00;
+        });
+
+        CompletableFuture<Double> servicoB = CompletableFuture.supplyAsync(() -> {
+            System.out.println("Cotando hospedagem...");
+            try {
+                Thread.sleep(800);
+            } catch (InterruptedException e) {
+                System.out.println("Cotacao de hospedagem interrompida.");
+            }
+            return 900.00;
+        });
+
+        CompletableFuture<String> pacote = servicoA
+                .thenCombine(servicoB, (passagem, hospedagem) -> {
+                    double total = passagem + hospedagem;
+                    return "Pacote de viagem -> Passagens: R$ " + passagem
+                            + " | Hospedagem: R$ " + hospedagem
+                            + " | Total: R$ " + total;
+                })
+                .exceptionally(erro -> {
+                    return "Nao foi possivel gerar o pacote: " + erro.getMessage();
+                });
+
+        String resultado = pacote.join();
+        System.out.println(resultado);
+
+        long fim = System.currentTimeMillis();
+        System.out.println("Tempo total: " + (fim - inicio) + " ms");
+    }
+}
