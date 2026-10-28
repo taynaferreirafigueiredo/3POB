@@ -1,0 +1,145 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
+class ContadorSemSincronizacao {
+    private int valor = 0;
+
+    public void incrementar() {
+        valor++;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+}
+
+class ContadorSincronizado {
+    private int valor = 0;
+
+    public synchronized void incrementar() {
+        valor++;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+}
+
+class ContadorAtomico {
+    private AtomicInteger valor = new AtomicInteger(0);
+
+    public void incrementar() {
+        valor.incrementAndGet();
+    }
+
+    public int getValor() {
+        return valor.get();
+    }
+}
+
+class TarefaSemSincronizacao implements Runnable {
+    private ContadorSemSincronizacao contador;
+
+    public TarefaSemSincronizacao(ContadorSemSincronizacao contador) {
+        this.contador = contador;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            contador.incrementar();
+        }
+    }
+}
+
+class TarefaSincronizada implements Runnable {
+    private ContadorSincronizado contador;
+
+    public TarefaSincronizada(ContadorSincronizado contador) {
+        this.contador = contador;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            contador.incrementar();
+        }
+    }
+}
+
+class TarefaAtomica implements Runnable {
+    private ContadorAtomico contador;
+
+    public TarefaAtomica(ContadorAtomico contador) {
+        this.contador = contador;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            contador.incrementar();
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        ContadorSemSincronizacao c1 = new ContadorSemSincronizacao();
+        Thread[] threads1 = new Thread[5];
+
+        for (int i = 0; i < 5; i++) {
+            threads1[i] = new Thread(new TarefaSemSincronizacao(c1));
+            threads1[i].start();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            try {
+                threads1[i].join();
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrompida.");
+            }
+        }
+
+        System.out.println("Sem sincronizacao: " + c1.getValor() + " (esperado: 5000)");
+
+        ContadorSincronizado c2 = new ContadorSincronizado();
+        Thread[] threads2 = new Thread[5];
+
+        for (int i = 0; i < 5; i++) {
+            threads2[i] = new Thread(new TarefaSincronizada(c2));
+            threads2[i].start();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            try {
+                threads2[i].join();
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrompida.");
+            }
+        }
+
+        System.out.println("Com synchronized: " + c2.getValor() + " (esperado: 5000)");
+
+        ContadorAtomico c3 = new ContadorAtomico();
+        Thread[] threads3 = new Thread[5];
+
+        for (int i = 0; i < 5; i++) {
+            threads3[i] = new Thread(new TarefaAtomica(c3));
+            threads3[i].start();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            try {
+                threads3[i].join();
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrompida.");
+            }
+        }
+
+        System.out.println("Com AtomicInteger: " + c3.getValor() + " (esperado: 5000)");
+
+        if (c2.getValor() == 5000 && c3.getValor() == 5000) {
+            System.out.println("Os dois metodos corrigidos chegaram em 5000!");
+        }
+    }
+}
