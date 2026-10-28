@@ -1,0 +1,64 @@
+import java.util.concurrent.CompletableFuture;
+
+class Pedido {
+    private int id;
+    private double total;
+
+    public Pedido(int id, double total) {
+        this.id = id;
+        this.total = total;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        System.out.println("Iniciando checkout...");
+
+        CompletableFuture<Void> pipeline = CompletableFuture
+                .supplyAsync(() -> {
+                    System.out.println("Buscando pedido... (" + Thread.currentThread().getName() + ")");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        System.out.println("Busca interrompida.");
+                    }
+                    return new Pedido(123, 250.00);
+                })
+                .thenApply(pedido -> {
+                    System.out.println("Calculando frete... (" + Thread.currentThread().getName() + ")");
+                    double frete = 25.00;
+                    pedido.setTotal(pedido.getTotal() + frete);
+                    return pedido;
+                })
+                .thenAccept(pedido -> {
+                    System.out.println("Enviando e-mail de confirmacao... (" + Thread.currentThread().getName() + ")");
+                    System.out.println("Pedido " + pedido.getId() + " confirmado! Total com frete: R$ " + pedido.getTotal());
+                });
+
+        for (int i = 1; i <= 5; i++) {
+            System.out.println("Main fazendo outra coisa... " + i);
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                System.out.println("Main interrompida.");
+            }
+        }
+
+        pipeline.join();
+
+        System.out.println("Checkout finalizado.");
+    }
+}
