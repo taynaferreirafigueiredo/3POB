@@ -1,0 +1,82 @@
+class Produto {
+    private String nome;
+    private double preco;
+
+    public Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public String toString() {
+        return nome + " - R$ " + preco;
+    }
+}
+
+class Caixa<T> {
+    private T conteudo;
+
+    public void guardar(T elemento) {
+        this.conteudo = elemento;
+    }
+
+    public T recuperar() {
+        return conteudo;
+    }
+
+    public boolean isVazia() {
+        if (conteudo == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void limpar() {
+        conteudo = null;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Caixa<Integer> caixaInteiro = new Caixa<Integer>();
+        System.out.println("Caixa de Integer vazia? " + caixaInteiro.isVazia());
+
+        caixaInteiro.guardar(42);
+        System.out.println("Caixa de Integer vazia? " + caixaInteiro.isVazia());
+
+        Integer numero = caixaInteiro.recuperar();
+        System.out.println("Numero guardado: " + numero);
+
+        Caixa<String> caixaTexto = new Caixa<String>();
+        caixaTexto.guardar("Ola, mundo!");
+
+        String texto = caixaTexto.recuperar();
+        System.out.println("Texto guardado: " + texto);
+        System.out.println("Tamanho do texto: " + texto.length());
+
+        Caixa<Produto> caixaProduto = new Caixa<Produto>();
+        Produto p = new Produto("Caderno", 15.90);
+        caixaProduto.guardar(p);
+
+        System.out.println("Produto guardado: " + caixaProduto.recuperar());
+        System.out.println("Nome do produto: " + caixaProduto.recuperar().getNome());
+
+        System.out.println();
+        System.out.println("Limpando as caixas...");
+        caixaInteiro.limpar();
+        caixaTexto.limpar();
+        caixaProduto.limpar();
+
+        System.out.println("Caixa de Integer vazia? " + caixaInteiro.isVazia());
+        System.out.println("Caixa de String vazia? " + caixaTexto.isVazia());
+        System.out.println("Caixa de Produto vazia? " + caixaProduto.isVazia());
+    }
+}
