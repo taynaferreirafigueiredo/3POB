@@ -1,0 +1,61 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class CalculadoraEstatistica<T extends Number> {
+    private List<T> lista;
+
+    public CalculadoraEstatistica() {
+        lista = new ArrayList<T>();
+    }
+
+    public void adicionar(T numero) {
+        lista.add(numero);
+    }
+
+    public double calcularMedia() {
+        if (lista.size() == 0) {
+            return 0;
+        }
+        double soma = 0;
+        for (int i = 0; i < lista.size(); i++) {
+            soma = soma + lista.get(i).doubleValue();
+        }
+        return soma / lista.size();
+    }
+
+    public double calcularMaior() {
+        if (lista.size() == 0) {
+            return 0;
+        }
+        double maior = lista.get(0).doubleValue();
+        for (int i = 1; i < lista.size(); i++) {
+            double atual = lista.get(i).doubleValue();
+            if (atual > maior) {
+                maior = atual;
+            }
+        }
+        return maior;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        CalculadoraEstatistica<Integer> calcInteiro = new CalculadoraEstatistica<Integer>();
+        calcInteiro.adicionar(10);
+        calcInteiro.adicionar(20);
+        calcInteiro.adicionar(30);
+        calcInteiro.adicionar(5);
+
+        System.out.println("Media (Integer): " + calcInteiro.calcularMedia());
+        System.out.println("Maior (Integer): " + calcInteiro.calcularMaior());
+
+        CalculadoraEstatistica<Double> calcDouble = new CalculadoraEstatistica<Double>();
+        calcDouble.adicionar(2.5);
+        calcDouble.adicionar(7.5);
+        calcDouble.adicionar(9.0);
+
+        System.out.println("Media (Double): " + calcDouble.calcularMedia());
+        System.out.println("Maior (Double): " + calcDouble.calcularMaior());
+
+        }
+}
