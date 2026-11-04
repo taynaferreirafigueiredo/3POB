@@ -1,0 +1,34 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Utilitario {
+    public static <T> void copiarElementos(List<? extends T> origem, List<? super T> destino) {
+        for (int i = 0; i < origem.size(); i++) {
+            T elemento = origem.get(i);
+            destino.add(elemento);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        List<Integer> inteiros = new ArrayList<Integer>();
+        inteiros.add(1);
+        inteiros.add(2);
+        inteiros.add(3);
+
+        List<Number> numeros = new ArrayList<Number>();
+        numeros.add(10.5);
+
+        List<Object> objetos = new ArrayList<Object>();
+        objetos.add("texto");
+
+        Utilitario.copiarElementos(inteiros, numeros);
+        Utilitario.copiarElementos(inteiros, objetos);
+
+        System.out.println("Origem: " + inteiros);
+        System.out.println("Destino Number: " + numeros);
+        System.out.println("Destino Object: " + objetos);
+
+    }
+}
