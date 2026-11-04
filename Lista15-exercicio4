@@ -1,0 +1,62 @@
+import java.util.ArrayList;
+import java.util.List;
+
+abstract class Figura {
+    public abstract double calcularArea();
+}
+
+class Quadrado extends Figura {
+    private double lado;
+
+    public Quadrado(double lado) {
+        this.lado = lado;
+    }
+
+    public double calcularArea() {
+        return lado * lado;
+    }
+}
+
+class Circulo extends Figura {
+    private double raio;
+
+    public Circulo(double raio) {
+        this.raio = raio;
+    }
+
+    public double calcularArea() {
+        return Math.PI * raio * raio;
+    }
+}
+
+class Utilitario {
+    public static double somarAreas(List<? extends Figura> listaFiguras) {
+        double total = 0;
+        for (int i = 0; i < listaFiguras.size(); i++) {
+            Figura f = listaFiguras.get(i);
+            total = total + f.calcularArea();
+        }
+        return total;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        List<Quadrado> quadrados = new ArrayList<Quadrado>();
+        quadrados.add(new Quadrado(2));
+        quadrados.add(new Quadrado(3));
+
+        List<Circulo> circulos = new ArrayList<Circulo>();
+        circulos.add(new Circulo(1));
+        circulos.add(new Circulo(2));
+
+        List<Figura> figuras = new ArrayList<Figura>();
+        figuras.add(new Quadrado(4));
+        figuras.add(new Circulo(3));
+
+        System.out.println("Soma areas quadrados: " + Utilitario.somarAreas(quadrados));
+        System.out.println("Soma areas circulos: " + Utilitario.somarAreas(circulos));
+        System.out.println("Soma areas figuras: " + Utilitario.somarAreas(figuras));
+
+        }
+}
