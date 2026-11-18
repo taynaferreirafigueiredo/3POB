@@ -1,0 +1,109 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+class Produto {
+    private Long id;
+    private String nome;
+    private Double preco;
+    private Integer estoque;
+
+    public Produto(Long id, String nome, Double preco, Integer estoque) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+        this.estoque = estoque;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public Double getPreco() {
+        return preco;
+    }
+
+    public Integer getEstoque() {
+        return estoque;
+    }
+
+    public String toString() {
+        return "Produto [id=" + id + ", nome=" + nome + ", preco=" + preco + ", estoque=" + estoque + "]";
+    }
+}
+
+public class Exercicio2 {
+
+    public static List<Produto> buscarPorFaixaPreco(Connection conn, double min, double max) {
+        List<Produto> produtos = new ArrayList<>();
+        String sql = "SELECT id, nome, preco, estoque FROM produtos WHERE preco BETWEEN ? AND ?";
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setDouble(1, min);
+            stmt.setDouble(2, max);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Long id = rs.getLong("id");
+                String nome = rs.getString("nome");
+                Double preco = rs.getDouble("preco");
+                Integer estoque = rs.getInt("estoque");
+
+                Produto p = new Produto(id, nome, preco, estoque);
+                produtos.add(p);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar produtos: " + e.getMessage());
+        }
+
+        return produtos;
+    }
+
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/loja";
+        String usuario = "root";
+        String senha = "123456";
+
+        Connection conn = null;
+
+        try {
+            conn = DriverManager.getConnection(url, usuario, senha);
+            System.out.println("Conectado ao banco de dados!");
+
+            List<Produto> lista = buscarPorFaixaPreco(conn, 10.0, 100.0);
+
+            if (lista.isEmpty()) {
+                System.out.println("Nenhum produto encontrado nessa faixa de preço.");
+            } else {
+                for (Produto p : lista) {
+                    System.out.println(p);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro de conexão: " + e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                    System.out.println("Conexão fechada.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+    }
+}
