@@ -1,0 +1,73 @@
+package br.edu.universidade.financeiro;
+
+/**
+ * Classe utilitária com cálculos financeiros básicos, como juros compostos
+ * e cota de amortização constante. Todos os métodos são estáticos e a classe
+ * não pode ser instanciada nem estendida.
+ *
+ * @author Aluno
+ * @version 1.0
+ * @since 1.0
+ */
+public final class CalculadoraFinanceira {
+
+    /**
+     * Construtor privado para impedir a criação de instâncias,
+     * já que a classe só possui métodos estáticos.
+     */
+    private CalculadoraFinanceira() {
+    }
+
+    /**
+     * Calcula o montante final de uma aplicação a juros compostos,
+     * usando a fórmula: montante = capital * (1 + taxaMensal) ^ meses.
+     *
+     * @param capital    valor inicial aplicado, não pode ser negativo
+     * @param taxaMensal taxa de juros mensal em formato decimal (ex.: 0.01 para 1%),
+     *                   deve estar entre 0.0 e 1.0
+     * @param meses      prazo da aplicação em meses, deve ser no mínimo 1
+     * @return o montante final acumulado após o prazo informado
+     * @throws IllegalArgumentException se o capital for menor que zero,
+     *                                  se a taxa estiver fora do intervalo entre 0.0 e 1.0
+     *                                  ou se o prazo for inferior a 1 mês
+     */
+    public static double calcularJurosCompostos(double capital, double taxaMensal, int meses) {
+        if (capital < 0) {
+            throw new IllegalArgumentException("O capital nao pode ser negativo.");
+        }
+        if (taxaMensal < 0.0 || taxaMensal > 1.0) {
+            throw new IllegalArgumentException("A taxa mensal deve estar entre 0.0 e 1.0.");
+        }
+        if (meses < 1) {
+            throw new IllegalArgumentException("O prazo deve ser de pelo menos 1 mes.");
+        }
+
+        return capital * Math.pow(1 + taxaMensal, meses);
+    }
+
+    /**
+     * Calcula a cota fixa de amortização mensal no sistema de amortização
+     * constante (SAC), dividindo o saldo devedor pelo prazo total.
+     * <p>
+     * Pré-condições: o saldo devedor deve ser maior que zero e o prazo
+     * deve ser de no mínimo 1 mês. Os juros não são considerados neste cálculo,
+     * apenas a parte do principal que é paga a cada mês.
+     * </p>
+     *
+     * @param saldoDevedor valor total da dívida a ser amortizada, deve ser maior que zero
+     * @param prazoMeses   quantidade total de meses do financiamento, deve ser no mínimo 1
+     * @return o valor da cota de amortização mensal, igual em todos os meses
+     * @throws IllegalArgumentException se o saldo devedor for menor ou igual a zero
+     *                                  ou se o prazo for inferior a 1 mês
+     */
+    public static double calcularAmortizacaoConstante(double saldoDevedor, int prazoMeses) {
+        if (saldoDevedor <= 0) {
+            throw new IllegalArgumentException("O saldo devedor deve ser maior que zero.");
+        }
+        if (prazoMeses < 1) {
+            throw new IllegalArgumentException("O prazo deve ser de pelo menos 1 mes.");
+        }
+
+        return saldoDevedor / prazoMeses;
+    }
+}
