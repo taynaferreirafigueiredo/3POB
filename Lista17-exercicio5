@@ -1,0 +1,130 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Exercicio5 {
+
+    public static void transferirFundos(Connection conn, Long idOrigem, Long idDestino, double valor) {
+        String sqlSaldo = "SELECT saldo FROM contas WHERE id = ?";
+        String sqlDebito = "UPDATE contas SET saldo = saldo - ? WHERE id = ?";
+        String sqlCredito = "UPDATE contas SET saldo = saldo + ? WHERE id = ?";
+
+        try {
+            conn.setAutoCommit(false);
+
+            PreparedStatement stmtSaldo = conn.prepareStatement(sqlSaldo);
+            stmtSaldo.setLong(1, idOrigem);
+            ResultSet rs = stmtSaldo.executeQuery();
+
+            if (!rs.next()) {
+                throw new Exception("Conta de origem não encontrada.");
+            }
+
+            double saldoAtual = rs.getDouble("saldo");
+            rs.close();
+            stmtSaldo.close();
+
+            PreparedStatement stmtDebito = conn.prepareStatement(sqlDebito);
+            stmtDebito.setDouble(1, valor);
+            stmtDebito.setLong(2, idOrigem);
+            int linhasDebito = stmtDebito.executeUpdate();
+            stmtDebito.close();
+
+            if (linhasDebito == 0) {
+                throw new Exception("Falha ao debitar a conta de origem.");
+            }
+
+            if (saldoAtual < valor) {
+                throw new Exception("Saldo insuficiente na conta de origem.");
+            }
+
+            PreparedStatement stmtCredito = conn.prepareStatement(sqlCredito);
+            stmtCredito.setDouble(1, valor);
+            stmtCredito.setLong(2, idDestino);
+            int linhasCredito = stmtCredito.executeUpdate();
+            stmtCredito.close();
+
+            if (linhasCredito == 0) {
+                throw new Exception("Conta de destino não encontrada.");
+            }
+
+            conn.commit();
+            System.out.println("Transferência de R$ " + valor + " realizada com sucesso!");
+
+        } catch (Exception e) {
+            System.out.println("Erro na transferência: " + e.getMessage());
+            try {
+                conn.rollback();
+                System.out.println("Rollback executado. Estado original restaurado.");
+            } catch (SQLException ex) {
+                System.out.println("Erro ao executar rollback: " + ex.getMessage());
+            }
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println("Erro ao restaurar autocommit: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void exibirSaldos(Connection conn) {
+        String sql = "SELECT id, titular, saldo FROM contas";
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                System.out.println("Conta " + rs.getLong("id") + " - " + rs.getString("titular") + ": R$ " + rs.getDouble("saldo"));
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Erro ao exibir saldos: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/loja";
+        String usuario = "root";
+        String senha = "123456";
+
+        Connection conn = null;
+
+        try {
+            conn = DriverManager.getConnection(url, usuario, senha);
+            System.out.println("Conectado ao banco de dados!");
+
+            System.out.println("\nSaldos iniciais:");
+            exibirSaldos(conn);
+
+            System.out.println("\nTransferência válida:");
+            transferirFundos(conn, 1L, 2L, 200.00);
+            exibirSaldos(conn);
+
+            System.out.println("\nTransferência com saldo insuficiente:");
+            transferirFundos(conn, 1L, 2L, 99999.00);
+            exibirSaldos(conn);
+
+            System.out.println("\nTransferência para conta inexistente:");
+            transferirFundos(conn, 1L, 999L, 50.00);
+            exibirSaldos(conn);
+
+        } catch (SQLException e) {
+            System.out.println("Erro de conexão: " + e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                    System.out.println("\nConexão fechada.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+    }
+}
