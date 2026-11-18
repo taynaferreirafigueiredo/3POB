@@ -1,0 +1,52 @@
+import java.util.Scanner;
+
+public class SimuladorRentabilidadeApp {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        double capital;
+        do {
+            System.out.print("Digite o capital principal: ");
+            capital = sc.nextDouble();
+            if (capital <= 0) {
+                System.out.println("Valor invalido! O capital deve ser maior que zero.");
+            }
+        } while (capital <= 0);
+
+        int meses;
+        do {
+            System.out.print("Digite o prazo em meses (1 a 60): ");
+            meses = sc.nextInt();
+            if (meses < 1 || meses > 60) {
+                System.out.println("Prazo invalido! Digite um valor entre 1 e 60.");
+            }
+        } while (meses < 1 || meses > 60);
+
+        System.out.println("Perfil do investidor:");
+        System.out.println("1 - Conservador");
+        System.out.println("2 - Moderado");
+        System.out.println("3 - Arrojado");
+        System.out.print("Digite o codigo do perfil: ");
+        int perfil = sc.nextInt();
+
+        double taxa = switch (perfil) {
+            case 1 -> 0.007;
+            case 2 -> 0.011;
+            case 3 -> 0.016;
+            default -> 0.0;
+        };
+
+        double saldo = capital;
+
+        System.out.println("\n=== Evolucao do saldo ===");
+        for (int mes = 1; mes <= meses; mes++) {
+            saldo = saldo * (1 + taxa);
+            System.out.printf("Mes %02d: R$ %.2f%n", mes, saldo);
+        }
+
+        System.out.printf("%nSaldo final acumulado: R$ %.2f%n", saldo);
+
+        sc.close();
+    }
+}
