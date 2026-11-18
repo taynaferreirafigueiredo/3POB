@@ -1,0 +1,69 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Exercicio4 {
+
+    public static void inserirLoteLog(Connection conn, List<String> mensagensLog) {
+        String sql = "INSERT INTO logs_sistema (mensagem, data_registro) VALUES (?, ?)";
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            for (String mensagem : mensagensLog) {
+                stmt.setString(1, mensagem);
+                stmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+                stmt.addBatch();
+            }
+
+            int[] resultados = stmt.executeBatch();
+
+            System.out.println("Lote executado com sucesso! Total de registros inseridos: " + resultados.length);
+
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir lote de logs: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/loja";
+        String usuario = "root";
+        String senha = "123456";
+
+        Connection conn = null;
+
+        try {
+            conn = DriverManager.getConnection(url, usuario, senha);
+            System.out.println("Conectado ao banco de dados!");
+
+            List<String> mensagens = new ArrayList<>();
+            for (int i = 1; i <= 500; i++) {
+                mensagens.add("Mensagem de log numero " + i);
+            }
+
+            long inicio = System.currentTimeMillis();
+            inserirLoteLog(conn, mensagens);
+            long fim = System.currentTimeMillis();
+
+            System.out.println("Tempo gasto: " + (fim - inicio) + " ms");
+
+        } catch (SQLException e) {
+            System.out.println("Erro de conexão: " + e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                    System.out.println("Conexão fechada.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+    }
+}
