@@ -1,0 +1,81 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class Exercicio3 {
+
+    public static void atualizarSalario(Connection conn, Long id, double novoSalario) {
+        String sql = "UPDATE funcionarios SET salario = ? WHERE id = ?";
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setDouble(1, novoSalario);
+            stmt.setLong(2, id);
+
+            int linhas = stmt.executeUpdate();
+
+            if (linhas == 0) {
+                System.out.println("Nenhum registro encontrado com o ID informado.");
+            } else {
+                System.out.println("Salário atualizado com sucesso! Linhas afetadas: " + linhas);
+            }
+
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar salário: " + e.getMessage());
+        }
+    }
+
+    public static void deletarPorId(Connection conn, Long id) {
+        String sql = "DELETE FROM funcionarios WHERE id = ?";
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, id);
+
+            int linhas = stmt.executeUpdate();
+
+            if (linhas == 0) {
+                System.out.println("Nenhum registro encontrado com o ID informado.");
+            } else {
+                System.out.println("Funcionário deletado com sucesso! Linhas afetadas: " + linhas);
+            }
+
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Erro ao deletar funcionário: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/loja";
+        String usuario = "root";
+        String senha = "123456";
+
+        Connection conn = null;
+
+        try {
+            conn = DriverManager.getConnection(url, usuario, senha);
+            System.out.println("Conectado ao banco de dados!");
+
+            atualizarSalario(conn, 1L, 3500.00);
+            atualizarSalario(conn, 999L, 4000.00);
+
+            deletarPorId(conn, 2L);
+            deletarPorId(conn, 999L);
+
+        } catch (SQLException e) {
+            System.out.println("Erro de conexão: " + e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                    System.out.println("Conexão fechada.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+    }
+}
